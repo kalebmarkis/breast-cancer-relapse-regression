@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Kaleb Chaney and Reece Champion">
+
+<title>Examining the Effects of Clinicopathologic Parameters on Time to Relapse in Primary Breast Cancer Patients: A Multiple Linear Regression Analysis</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="breast-cancer-relapse-regression-code_files/libs/clipboard/clipboard.min.js"></script>
+<script src="breast-cancer-relapse-regression-code_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="breast-cancer-relapse-regression-code_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="breast-cancer-relapse-regression-code_files/libs/quarto-html/popper.min.js"></script>
+<script src="breast-cancer-relapse-regression-code_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="breast-cancer-relapse-regression-code_files/libs/quarto-html/anchor.min.js"></script>
+<link href="breast-cancer-relapse-regression-code_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="breast-cancer-relapse-regression-code_files/libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="breast-cancer-relapse-regression-code_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="breast-cancer-relapse-regression-code_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="breast-cancer-relapse-regression-code_files/libs/bootstrap/bootstrap-138a6193a3bd40baf1e627da441a4734.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Examining the Effects of Clinicopathologic Parameters on Time to Relapse in Primary Breast Cancer Patients: A Multiple Linear Regression Analysis</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Kaleb Chaney and Reece Champion </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>The focus of this analysis is a breast cancer data set used in a survival analysis and prognostic model evaluation, namely the Cox prognostic model, by Roystan and Altman (2013). The data set being investigated is derived from a broader collection of data obtained via the Rotterdam tumor bank and includes a variety of clinicopathologic data of 2982 primary breast cancer patients, that is breast cancer patients in whom no spread to distant organs was reported and who underwent a primary tumor removal surgery. These data were acquired from the repository of built-in data sets in R provided in the course project instructions, and are included in the data frame ‘RotterdamBreastCancer_df’ in the OncoDatasets. The data was edited to exclude patients whose cancer never recurred, with 1518 patients with recurrent cancer retained in the data set used.</p>
+<p>The <em>outcome</em> variable of interest is <strong>rtime</strong>: a discrete numeric variable representing the number of days until the recurrence of cancer, or tumor relapse, for each patient. The <em>independent predictor</em> variables being explored for their putative effects on the time of relapse all refer to evaluative characteristics of the tumor removed or the patient. These include:</p>
+<p><strong>nodes</strong>— a discrete numeric variable representing the number of lymph nodes involved, indicating the tumor’s capacity for disseminating to and proliferating within the lymphatic system</p>
+<p><strong>pgr</strong> and <strong>er</strong>— a discrete numeric variable quantifying the amount of progesterone receptor and estrogen receptor protein respectively in a sample of tumor cells recorded in (fmol/L), which is a proxy for determining the expression of each hormone’s receptor in the cancerous cells</p>
+<p><strong>meno</strong>— a binary categorical variable with two levels representing the patients’ menopausal status, ‘0’ for pre-menopausal and ‘1’ for post-menopausal</p>
+<p><strong>size</strong>— a tri-level categorical variable representing the size category corresponding to each tumor excised, determined through measuring the tumor’s largest diameter, wherein ‘small’ reflects diameters less than or equal to 20 mm, ‘moderate’ reflects diameters ranging from 20 to 50 mm, and ‘large’ reflects diameters greater than 50 mm. 208 patients have ‘large’ tumor size, 745 have a ‘moderate’ tumor, and 565 patients have a ‘small’ tumor.</p>
+<p>The significance of exploring this data set lies in improving the clinical understanding of how these independent variables bode for both the risk and time course of relapse in patients whose cancer returns after surgery. A clearer sense of the nature and prevalence of these associations can help refine the prognostic accuracy and applied utility of the Cox model, ultimately serving to the betterment of the quality and promptitude of clinical decision-making and treatment planning in modern breast cancer care. Whether or not cancer will recur and how long it takes to do so are data that would prove fundamentally significant regarding the anticipation of disease progression and the trajectory of patient care. An improved model with higher prognostic accuracy can result in the timely initiation of adjunct therapies and enhanced disease surveillance.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># download OncoDataSets package if necessary</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("OncoDataSets")</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># load library to access dataset</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(OncoDataSets)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># load dataset</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"RotterdamBreastCancer_df"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># filter out non-recurring patients</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>rbc_recur <span class="ot">&lt;-</span> RotterdamBreastCancer_df[RotterdamBreastCancer_df<span class="sc">$</span>recur <span class="sc">!=</span> <span class="dv">0</span>, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="research-questions" class="level2">
+<h2 class="anchored" data-anchor-id="research-questions">Research Questions</h2>
+<p>After familiarizing ourselves with the data included in the data set, there are three questions of particular interest:</p>
+<ol type="1">
+<li>Does the <strong>menopausal status of primary breast cancer patients</strong>, specifically whether they are pre-menopausal or post-menopausal, have a measurable effect on the time of cancer recurrence following the first removal procedure in patients whose cancer did recur?</li>
+</ol>
+<p>This question warrants investigation because of the physiological changes that characterize menopause and the implications these changes have on the theoretical response of the tumor to hormonal treatment specifically. When the cancerous mass is deemed positive for either estrogen or progesterone receptor expression, this indicates that the survival and spread of the tumor is at least in part sustained by circulating levels of endogenous estrogen and progesterone. In this event, hormonal treatment would be advisable since these receptors can be antagonized pharmacologically, therefore eliminating one of the life-sustaining pathways contributing to tumor proliferation. Phrased more simply, hormone-receptor–positive tumors depend on estrogen or progesterone to grow, so changes in these hormone levels can alter how the tumor responds to therapies that block these signals. Because circulating estrogen and progesterone levels substantially decline during menopause, it can be reasonably conjectured that post-menopausal status in patients whose cancer did recur may plausibly influence tumor behavior and pharmacological dynamics of hormonal treatment. In these patients, the amount of endogenous hormone that receptor antagonists must compete with for ligand binding-site occupation is reduced, potentially altering treatment efficacy.</p>
+<ol start="2" type="1">
+<li>Does the <strong>quantity of estrogen receptor protein measured in the tumor cells</strong> in primary breast cancer patients have a measurable effect on the time of cancer recurrence following the first removal procedure in patients whose cancer did recur?</li>
+</ol>
+<p>In accordance with the physiological rationale for hormonal treatment in PR+ or ER+ tumors— defined by surpassing established fmol/L thresholds— it is important to investigate how receptor expression influences time to relapse. In modern breast cancer treatment, determining whether cancer cells express estrogen or progesterone receptors is a crucial factor in assessing the viability of hormonal therapy. Hypothetically, the higher the level of receptor expression, the greater the cancerous cells’ dependency on hormone-receptor interactions for survival and spread, and therefore the greater the potential impact of hormonal treatment on patient outcomes.</p>
+<ol start="3" type="1">
+<li>Does the <strong>size category of the tumor removed in primary breast cancer patients</strong>, representing the broadest measurable diameter of the mass, have a measurable effect on the time of cancer recurrence following the first removal procedure?</li>
+</ol>
+<p>In the medical characterization of a tumor, one of the very first measurements obtained following surgical excision is its size. The standard means of declaring the size of an excised tumor or mass is to indicate its largest diameter in any dimension. In the Rotterdam data set, size encompasses three subcategories ‘small’, ‘intermediate’, and ‘large’ corresponding to diameters of &lt;= 20 mm, 20-50 mm, and &gt;= 50 mm respectively. The potential effect tumor size has on time until recurrence is worth investigating because tumor size can potentially carry substantial clinical relevance. For instance, a correlation between tumor size and metastasis, the systemic spreading of the cancer, recurrence, and even lymph node involvement has been observed and is more pronounced in certain cancers. Given how foundational tumor size is in clinical staging and risk assessment, scrutinizing its effect in post-operative breast cancer recurrence is arguably the most straightforward first step in the efforts of improving prognostic models of this sort.</p>
+</section>
+<section id="data-exploration" class="level2">
+<h2 class="anchored" data-anchor-id="data-exploration">Data Exploration</h2>
+<p>The putative relationship or rough association between the predictor variables of interest, <strong>nodes</strong>, <strong>pgr</strong>, <strong>er</strong>, <strong>size</strong>, and <strong>meno</strong>, and the outcome variable <strong>rtime</strong> were visualized as a preliminary step, using scatter plots for the numeric predictors and box and multiple box plots for the categorical predictors.</p>
+<p>The predictor variables that appear to have the most notable correlation with the outcome variable include <strong>nodes</strong> and <strong>size</strong>. In the plot visualizing number of days to cancer relapse against the <strong>number of lymph nodes</strong> involved, there is a conspicuous downward trend. In the multiple box plot visualizing the center and spread of each <strong>size</strong> category, the average number of days to relapse and the overall value ranges associated with each differ noticeably.</p>
+<p>As for the other predictors being explored in this analysis, their relationships with the outcome variable <strong>rtime</strong> appear to be weaker or less discernible from the simple visualizations alone. No noticeable differences in the center and spread of the <strong>rtime</strong> values observed for patients of each menopausal status are manifest. Additionally, the visualizations of <strong>rtime</strong> values plotted against the receptor protein quantities (estrogen or progesterone) for each patient indicate some association but one that appears minimal at best without further statistical exploration.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load ggplot package</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># scatter plot of rtime against nodes</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rbc_recur, <span class="fu">aes</span>( <span class="at">x =</span> nodes, <span class="at">y =</span> rtime)) <span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>( <span class="at">name =</span> <span class="st">"Days to Cancer Relapse"</span>) <span class="sc">+</span> </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>( <span class="at">name =</span> <span class="st">"# of Involved Lymph Nodes"</span>) <span class="sc">+</span> </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>( <span class="at">title =</span> <span class="st">"Time to Relapse and Number of Involved Lymph Nodes"</span>) <span class="sc">+</span> </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="st">"black"</span>),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="breast-cancer-relapse-regression-code_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scatter plot of rtime against pgr</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rbc_recur, <span class="fu">aes</span>( <span class="at">x =</span> pgr, <span class="at">y =</span> rtime)) <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>( <span class="at">name =</span> <span class="st">"Days to Cancer Relapse"</span>) <span class="sc">+</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>( <span class="at">name =</span> <span class="st">"Amount of PR Protein (fmol/L)"</span>) <span class="sc">+</span> </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>( <span class="at">title =</span> <span class="st">"Time to Relapse and Progesterone Receptor (PR) Quantity in Tumor Sample"</span>) <span class="sc">+</span> </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="st">"black"</span>),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="breast-cancer-relapse-regression-code_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scatter plot of rtime against er</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rbc_recur, <span class="fu">aes</span>( <span class="at">x =</span> er, <span class="at">y =</span> rtime)) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>( <span class="at">name =</span> <span class="st">"Days to Cancer Relapse"</span>) <span class="sc">+</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>( <span class="at">name =</span> <span class="st">"Amount of ER Protein (fmol/L)"</span>) <span class="sc">+</span> </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>( <span class="at">title =</span> <span class="st">"Time to Relapse and Estrogen Receptor (ER) Quantity in Tumor Sample"</span>) <span class="sc">+</span> </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="st">"black"</span>),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="breast-cancer-relapse-regression-code_files/figure-html/unnamed-chunk-2-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># box plot of rtime by size</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rbc_recur, <span class="fu">aes</span>(<span class="at">x =</span> size, <span class="at">y =</span> rtime, <span class="at">fill =</span> size )) <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>( <span class="at">show.legend =</span> <span class="cn">FALSE</span> ) <span class="sc">+</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">fill =</span> size),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">alpha =</span> <span class="dv">0</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">show.legend =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">4</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">shape =</span> <span class="dv">21</span>) <span class="sc">+</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>( <span class="at">name =</span> <span class="st">"Days to Cancer Relapse"</span> ) <span class="sc">+</span> </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>( <span class="at">name =</span> <span class="cn">NULL</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Small"</span>, <span class="st">"Moderate"</span>, <span class="st">"Large"</span>)) <span class="sc">+</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>( </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Tumor Size (mm)"</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"&lt;=20"</span> <span class="ot">=</span> <span class="st">"white"</span>, <span class="st">"20-50"</span> <span class="ot">=</span> <span class="st">"grey80"</span>, <span class="st">"&gt;50"</span> <span class="ot">=</span> <span class="st">"grey60"</span>),</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">"small"</span> <span class="ot">=</span> <span class="st">"small: ≤ 20 mm"</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">"moderate"</span> <span class="ot">=</span> <span class="st">"moderate: 20–50 mm"</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>      <span class="st">"large"</span> <span class="ot">=</span> <span class="st">"large: ≥ 50 mm"</span>),</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">guide =</span> <span class="fu">guide_legend</span>(</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">colour =</span> <span class="st">"black"</span>)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">+</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span> ( <span class="at">title =</span> <span class="st">"Time to Relapse Summaries for Each Tumor Size Category"</span>) <span class="sc">+</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="st">"black"</span>),</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.key =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="breast-cancer-relapse-regression-code_files/figure-html/unnamed-chunk-2-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># box plot of rtime by meno</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>rbc_recur<span class="sc">$</span>meno <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(rbc_recur<span class="sc">$</span>meno)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rbc_recur, <span class="fu">aes</span>(<span class="at">x =</span> meno, <span class="at">y =</span> rtime)) <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>( <span class="at">name =</span> <span class="st">"Days to Cancer Relapse"</span> ) <span class="sc">+</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>( <span class="at">name =</span> <span class="cn">NULL</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Pre-menopausal"</span>, <span class="st">"Post-menopausal"</span>)) <span class="sc">+</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span> ( <span class="at">title =</span> <span class="st">"Time to Relapse Summaries for Each Menopausal Status"</span>) <span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="st">"black"</span>),</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="breast-cancer-relapse-regression-code_files/figure-html/unnamed-chunk-2-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="multiple-linear-regression-model" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-linear-regression-model">Multiple Linear Regression Model</h2>
+<p>The results of the multiple linear model provided below are interesting. In terms of the overall model test, the null and alternative hypotheses are written as follows:</p>
+<p><span class="math display">\[
+H_0: \beta_{nodes} =\beta_{pgr}=\beta_{er}=\beta_{size-small}=\beta_{size-moderate}=\beta_{size-large}=\beta_{meno-pre}=\beta_{meno-post} = 0
+\]</span> <span class="math display">\[
+H_A: &gt;1 \beta_j \neq 0 for j=nodes,...,meno
+\]</span></p>
+<p>The null hypothesis declares that none of the independent predictor variables explored contribute a significant effect to the variability observed in the outcome <strong>rtime</strong>. The alternative hypothesis states that there exists a non-zero effect on the outcome for at least one predictor variable.</p>
+<p>When looking at the overall F-test results which evaluated the above hypotheses, there is an F-statistic of 23.49 on 6 and 1511 degrees of freedom with a p-value less than 2.16 e^-16. Therefore, based on the overall F-test (F=23.49, p=&lt;2.16e-16) the null hypothesis can be rejected, lending to the conclusion that at least one of the independent variables included in the model has a statistically significant effect on the variability observed in the outcome. Despite these results, the multiple R^2 value is a meager 0.08533, meaning that only 8.533% of the variability observed in the outcome <strong>rtime</strong> is actually explained by the fitted model. So even though the model test indicates that at least one variable contributes a significant effect, this effect is ultimately small in a practical sense.</p>
+<p>Regarding the effect of lymph node involvement, there appears a negative association between days until relapse and the number of lymph nodes involved in the breast cancer. The slope estimated for number of lymph nodes is -29.71 with a p-value of 7.55e-09, meaning that per additional involved lymph node present, the number of days until cancer relapse decreases by 29.71 holding all other independent variables constant. Because this result is statistically significant (p &lt; α = 0.05), it can be inferred that the more lymph nodes involved in the primary breast cancer case, the sooner recurrence will likely occur in patients whose cancer does return after removal of the primary tumor. This is in line with our hypothesis because lymphatic involvement is an immediate and necessary precursor for the manifestation of secondary cancers elsewhere in the body, so it’s sensible that the <strong>greater</strong> the lympatic involvement, the more mobility the cancer has in the body, which may accelerate recurrence and lead to reduced <strong>rtime</strong> values.</p>
+<p>Regarding the effects of both <strong>pgr</strong> and <strong>er</strong> independent variables, the quantity of progesterone and estrogen receptor protein present in the extracted tumor have a relatively smaller effect compared to the other predictors. Each additional fmol/L of progesterone receptor is associated with a 0.27-day increase in the total duration until cancer relapse (slope = 0.266, p = 0.0036), and each additional fmol/L of estrogen receptor is associated with a 0.26-day increase (slope = 0.255, p = 0.0117), holding all other variables constant. The results for both receptors are consistent with expectations, as higher expression of either hormone receptor in the primary tumor mass tends to result in improved response to hormonal treatment clinically which translates to a delay in tumor recurrence for patients who did experienced cancer relapse.</p>
+<p>Regarding results generated for the categorical predictor size, coefficients were obtained for “moderate” and “large” size categories with “small” being the point of reference for interpretation. Relative to patients with a small tumor (&gt;= 20 mm), patients with a moderate tumor (20-50 mm) have a smaller relapse time course that is reduced by approximately 270.83 days (p = 6.58e-07), whereas patients with a large tumor (&gt;50 mm) have a relapse time course reduced by a staggering 443.27 days (p = 8.25e-08). These results align with what was expected initially because its more probable that larger tumors, by virtue of their greater volume and increased cellular impact, have already engendered metastatic cells or spread to regional lymph nodes which can be further conveyed via systemic lymphatic drainage. Consequently, patients with moderate or large tumors tend to experience recurrence sooner than those with small tumors.</p>
+<p>The last variable to interpret is the binary categorical variable <strong>meno</strong>. A coefficient was generated for the “post-menopausal” level of the variable, with “pre-menopausal” standing in as the point of reference for interpretation. According to the results, post-menopausal women have an estimated 64.94-day reduction in their relapse time course as compared to women who haven’t (pre-menopausal) (p = 0.21318). This coefficient is not statistically significant however, as the p-value exceeds the significance value established at α = 0.05. This indicates that no difference in <strong>rtime</strong> between pre- and post-menopausal breast cancer patients can be concluded.</p>
+<p>In reflecting on the overall predictive accuracy of the model, it is essential to interpret the residual standard error (RSE). The model has an RSE of 947.2, meaning that predictions for new patients could deviate on average by approximately 947 days from the true <strong>rtime</strong> values observed. The observed range of <strong>rtime</strong> in the data set used in this analysis, including only patients whose cancer did relapse, spans 38 to 5,473 days, and the RSE alone represents ~17% of this range. This indicates that predictions may be highly imprecise, highlighting the need for model improvement or the inclusion of additional relevant predictors.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fitting a linear model predicting rtime</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>rbc_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(rtime <span class="sc">~</span> nodes <span class="sc">+</span> pgr <span class="sc">+</span> er <span class="sc">+</span> size <span class="sc">+</span> meno, <span class="at">data =</span> rbc_recur)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print summary of model</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rbc_lm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = rtime ~ nodes + pgr + er + size + meno, data = rbc_recur)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1895.7  -658.4  -281.1   420.3  4156.6 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 1489.41138   49.84704  29.880  &lt; 2e-16 ***
+nodes        -29.70863    5.11226  -5.811 7.55e-09 ***
+pgr            0.26557    0.09096   2.920  0.00356 ** 
+er             0.25523    0.10116   2.523  0.01174 *  
+size20-50   -270.83038   54.22384  -4.995 6.58e-07 ***
+size&gt;50     -443.27078   82.26841  -5.388 8.25e-08 ***
+meno1        -64.94487   52.14763  -1.245  0.21318    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 947.2 on 1511 degrees of freedom
+Multiple R-squared:  0.08533,   Adjusted R-squared:  0.0817 
+F-statistic: 23.49 on 6 and 1511 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</section>
+<section id="improving-the-model" class="level2">
+<h2 class="anchored" data-anchor-id="improving-the-model">Improving the Model</h2>
+<p>The generated diagnostic plots for the model do raise concerns for each regression assumption. Beginning with the residuals vs.&nbsp;fitted plot, there is a glaring issue with linearity as the plot demonstrates a systematic deviation from the horizontal line at 0. Additionally, homoscedasticity appears to be violated due to the a general funnel shape where the residuals are quite clustered around the fitted value of 500 with a widening spread as the fitted values increase towards 2000. The Normal Q-Q plot brings attention to a violation of the normality assumption owing to the systematic deviation in both tails, but specifically the right tail, indicating a large right skew in the outcome variable, corroborated by the histogram of time to recurrence.</p>
+<p>To correct these violations through transforming the outcome variable, a log transformation would be appropriate as delineated by the Box-Cox Transform since the lambda value is near 0. This eliminated the right skew, and although not perfect, the distribution of the log of the time to recurrence approaches normal. Notably, this transformation improved the F-statistic and multiple <span class="math inline">\(R^2\)</span> of the model, up from 23.49 to 31.72 and 0.0853 to 0.1119, respectively. The same positive effect can be observed in the diagnostic plots using the log-transformed outcome, which now show no major violations of the assumptions. The errors are now more closely centered around 0 in the residuals vs.&nbsp;fitted plot, with only minor deviations, satisfying the linearity assumption. The previously observed funnel shape is now also absent in addition to there being no systematic deviations away from the flat line in the scale-location plot, demonstrating homoscedasticity. Finally, both of the tails in the Normal Q-Q plot still deviate from the <span class="math inline">\(y = x\)</span> line, but due to their symmetric shape, this indicates heavy tails which is common in large datasets. Therefore, we can proceed with statistical inference in the absence of any analysis-shattering violations of the regression assumptions.</p>
+<p>For the <strong>er</strong> variable, a spline was considered due to the predictor’s low linear correlation with the outcome. In doing so, the model inclusive of the spline for estrogen receptor status accounted for more variability in the time to recurrence in days, but showed varying levels of statistical significance by division in the spline. Moreover, the presence of the spline resulted in a complication with the linearity assumption, and thus was discarded.</p>
+<p>Due to the dramatic reduction in circulating estrogen levels following menopause in women, an interaction term between <strong>meno</strong> and <strong>er</strong> warrants investigating Fitting a model with that interaction results in the <strong>er</strong> variable no longer being statistically significant while making the <strong>meno1</strong> dummy variable statistically significant at a lower significance level (0.01), but the interaction term itself is not significant with a P-value of 0.18. Nevertheless, in this model, for a woman who has undergone menopause, the slope on <strong>er</strong> is 0.0003 units more positive than for a woman who has not undergone menopause.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load package for autoplot</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggfortify)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># create diagnostic plots for model</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(rbc_lm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: `fortify(&lt;lm&gt;)` was deprecated in ggplot2 4.0.0.
+ℹ Please use `broom::augment(&lt;lm&gt;)` instead.
+ℹ The deprecated feature was likely used in the ggfortify package.
+  Please report the issue at &lt;https://github.com/sinhrks/ggfortify/issues&gt;.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
+ℹ Please use tidy evaluation idioms with `aes()`.
+ℹ See also `vignette("ggplot2-in-packages")` for more information.
+ℹ The deprecated feature was likely used in the ggfortify package.
+  Please report the issue at &lt;https://github.com/sinhrks/ggfortify/issues&gt;.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.
+ℹ The deprecated feature was likely used in the ggfortify package.
+  Please report the issue at &lt;https://github.com/sinhrks/ggfortify/issues&gt;.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="breast-cancer-relapse-regression-code_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize distribution of outcome variable</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rbc_recur<span class="sc">$</span>rtime, <span class="at">main =</span> <span class="st">"Distribution of Time to Recurrence"</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Time to Recurrence (Days)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="breast-cancer-relapse-regression-code_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># determine best tranformation for outcome variable</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>bc <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">boxcox</span>(rbc_lm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="breast-cancer-relapse-regression-code_files/figure-html/unnamed-chunk-4-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use log transformation and revisualize distribution of outcome</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>rbc_recur<span class="sc">$</span>logrtime <span class="ot">&lt;-</span> <span class="fu">log</span>(rbc_recur<span class="sc">$</span>rtime)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rbc_recur<span class="sc">$</span>logrtime, <span class="at">main =</span> <span class="st">"Distribution of Log of Time to Recurrence"</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Log of Time to Recurrence (Days)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="breast-cancer-relapse-regression-code_files/figure-html/unnamed-chunk-4-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit linear model predicting rtime using log transformation</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>rbc_log_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(logrtime <span class="sc">~</span> nodes <span class="sc">+</span> pgr <span class="sc">+</span> er <span class="sc">+</span> size <span class="sc">+</span> meno, <span class="at">data =</span> rbc_recur)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print summary of log model</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rbc_log_lm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = logrtime ~ nodes + pgr + er + size + meno, data = rbc_recur)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.5921 -0.5431  0.0312  0.6049  2.3634 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  7.038e+00  4.380e-02 160.687  &lt; 2e-16 ***
+nodes       -3.103e-02  4.492e-03  -6.907 7.27e-12 ***
+pgr          2.645e-04  7.992e-05   3.310 0.000956 ***
+er           2.945e-04  8.888e-05   3.313 0.000945 ***
+size20-50   -2.307e-01  4.764e-02  -4.841 1.42e-06 ***
+size&gt;50     -4.369e-01  7.229e-02  -6.044 1.89e-09 ***
+meno1       -1.123e-01  4.582e-02  -2.451 0.014359 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.8323 on 1511 degrees of freedom
+Multiple R-squared:  0.1119,    Adjusted R-squared:  0.1083 
+F-statistic: 31.72 on 6 and 1511 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create diagnostic plots for log model</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(rbc_log_lm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="breast-cancer-relapse-regression-code_files/figure-html/unnamed-chunk-4-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load package for spline</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(splines)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># create model with spline</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>rbc_spline <span class="ot">&lt;-</span> <span class="fu">lm</span>(logrtime <span class="sc">~</span> <span class="fu">bs</span>(er, <span class="dv">3</span>) <span class="sc">+</span> pgr <span class="sc">+</span> meno <span class="sc">+</span> nodes <span class="sc">+</span> size, <span class="at">data =</span> rbc_recur)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print summary of spline model</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rbc_spline)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = logrtime ~ bs(er, 3) + pgr + meno + nodes + size, 
+    data = rbc_recur)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.4681 -0.5387  0.0257  0.6118  2.2885 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  7.0050262  0.0454614 154.087  &lt; 2e-16 ***
+bs(er, 3)1   0.9930719  0.2763243   3.594 0.000336 ***
+bs(er, 3)2  -1.1831959  0.6862995  -1.724 0.084909 .  
+bs(er, 3)3   1.7943923  0.7864389   2.282 0.022648 *  
+pgr          0.0002421  0.0000811   2.985 0.002884 ** 
+meno1       -0.1325323  0.0468780  -2.827 0.004758 ** 
+nodes       -0.0310053  0.0044835  -6.915 6.87e-12 ***
+size20-50   -0.2236412  0.0476426  -4.694 2.92e-06 ***
+size&gt;50     -0.4342330  0.0722765  -6.008 2.35e-09 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.8307 on 1509 degrees of freedom
+Multiple R-squared:  0.1163,    Adjusted R-squared:  0.1116 
+F-statistic: 24.83 on 8 and 1509 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># assess assumptions with spline model</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(rbc_spline)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="breast-cancer-relapse-regression-code_files/figure-html/unnamed-chunk-4-6.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit a linear model to predict rtime with meno/er interaction</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>rbc_menoer_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(logrtime <span class="sc">~</span> nodes <span class="sc">+</span> pgr <span class="sc">+</span> er <span class="sc">+</span> size <span class="sc">+</span> meno <span class="sc">+</span> meno <span class="sc">*</span> er, <span class="at">data =</span> rbc_recur)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print summary of interaction model</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rbc_menoer_lm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = logrtime ~ nodes + pgr + er + size + meno + meno * 
+    er, data = rbc_recur)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.6313 -0.5272  0.0309  0.6029  2.3590 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  7.060e+00  4.684e-02 150.718  &lt; 2e-16 ***
+nodes       -3.095e-02  4.491e-03  -6.891 8.11e-12 ***
+pgr          2.736e-04  8.019e-05   3.412 0.000662 ***
+er          -1.469e-05  2.476e-04  -0.059 0.952689    
+size20-50   -2.321e-01  4.764e-02  -4.872 1.22e-06 ***
+size&gt;50     -4.416e-01  7.235e-02  -6.103 1.32e-09 ***
+meno1       -1.439e-01  5.155e-02  -2.792 0.005304 ** 
+er:meno1     3.487e-04  2.607e-04   1.338 0.181245    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.832 on 1510 degrees of freedom
+Multiple R-squared:  0.1129,    Adjusted R-squared:  0.1088 
+F-statistic: 27.45 on 7 and 1510 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</section>
+<section id="formal-hypothesis-tests" class="level2">
+<h2 class="anchored" data-anchor-id="formal-hypothesis-tests">Formal Hypothesis Tests</h2>
+<p>The following hypotheses, formulated from the overarching research questions posed above, will be formally investigated:</p>
+<ol type="1">
+<li><p><span class="math inline">\(H_0: \beta_{meno-post} = 0\)</span> <span class="math inline">\(H_A: \beta_{meno-post} ≠ 0\)</span></p></li>
+<li><p><span class="math inline">\(H_0: \beta_{er} = 0\)</span> <span class="math inline">\(H_A: \beta_{er} ≠ 0\)</span></p></li>
+<li><p><span class="math inline">\(H_0: \beta_{size-moderate} = \beta_{size-large} = 0\)</span> <span class="math inline">\(H_A\)</span>: At least one of the size group coefficients is not equal to 0.</p></li>
+</ol>
+<p>After conducting t-tests for hypotheses 1 and 2 as well as a single-term deletion test for hypothesis 3 with a significance level of 0.05, the null hypothesis can be rejected for each research question, indicating that the slope coefficients for the post-menopausal group for the <strong>meno</strong> variable is significantly different from 0 (t(1511) = -2.45, p = 0.01), the slope coefficient for the <strong>er</strong> variable is significantly different from 0 (t(1511) = 3.31, p = 0.0009), and the model including the <strong>size</strong> variable is preferred to the reduced model excluding it (F = 21.27, p &lt; 0.001).</p>
+<p>Referring back to the original research questions, the conclusions reached by the tests indicate that there does exist an effect of menopausal status, estrogen receptor status, and tumor size on the time in days to recurrence although the estimated slopes rendered are incredibly small. These conclusions are based on the log-transformed outcome model (using <strong>logrtime</strong>), which stabilizes variance and reduces skew in the residuals. Because the outcome is now on a log scale, slope magnitudes appear small, but they still reflect the relative proportional effect of each predictor on time to tumor recurrence. These results do support the research questions and hypotheses raised as only a general effect was hypothesized to exist for each of these predictors on the outcome. However, the nature and magnitude of the real effects of the variables examined are likely questionable. A limitation of these conclusions is that since this is an observational study, causality of these features on time to recurrence cannot be determined.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># perform t-tests</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rbc_log_lm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = logrtime ~ nodes + pgr + er + size + meno, data = rbc_recur)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.5921 -0.5431  0.0312  0.6049  2.3634 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  7.038e+00  4.380e-02 160.687  &lt; 2e-16 ***
+nodes       -3.103e-02  4.492e-03  -6.907 7.27e-12 ***
+pgr          2.645e-04  7.992e-05   3.310 0.000956 ***
+er           2.945e-04  8.888e-05   3.313 0.000945 ***
+size20-50   -2.307e-01  4.764e-02  -4.841 1.42e-06 ***
+size&gt;50     -4.369e-01  7.229e-02  -6.044 1.89e-09 ***
+meno1       -1.123e-01  4.582e-02  -2.451 0.014359 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.8323 on 1511 degrees of freedom
+Multiple R-squared:  0.1119,    Adjusted R-squared:  0.1083 
+F-statistic: 31.72 on 6 and 1511 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># perform single-term deletion tests</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">drop1</span>(rbc_log_lm, <span class="at">test =</span> <span class="st">"F"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Single term deletions
+
+Model:
+logrtime ~ nodes + pgr + er + size + meno
+       Df Sum of Sq    RSS     AIC F value    Pr(&gt;F)    
+&lt;none&gt;              1046.6 -550.47                      
+nodes   1    33.044 1079.6 -505.28 47.7070 7.268e-12 ***
+pgr     1     7.588 1054.2 -541.50 10.9547 0.0009557 ***
+er      1     7.603 1054.2 -541.48 10.9760 0.0009448 ***
+size    2    29.461 1076.1 -512.33 21.2671 7.788e-10 ***
+meno    1     4.161 1050.8 -546.45  6.0073 0.0143594 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="robustness-of-results" class="level2">
+<h2 class="anchored" data-anchor-id="robustness-of-results">Robustness of Results</h2>
+<p>Diagnostic plots revealed three potentially influential observations (2141, 2164, and 2674) that surpass the calculated leverage cutoff of 0.0119. By isolating these three observations (patients 2773, 1421, and 2802) and comparing their values for the numeric predictors <strong>nodes</strong>, <strong>pgr</strong>, and <strong>er</strong>, it became evident that the tumor excised from patient 2141 had a high progesterone and estrogen receptor status of 999 fmol/L for both in comparison to the mean of 145.7 fmolL and 161.8 fmol/L respectively. Patient 2164’s tumor had a high progesterone receptor status of 3000 fmol/L as well, notably the largest in the dataset. Lastly, patient 2674’s sample showed a high estrogen receptor status of 301 fmol/L in addition to the patient possessing a large number of lymph nodes involved at 30, well above the average of 3.96 and falling above the third quartile of 6. These features are undoubtedly responsible for the high leverages observed (approximately 0.12, 0.2, and 0.8) for the aforementioned patients.</p>
+<p>Despite the presence of an influential observation, removing patient 2164 from consideration in the model, due to both the high leverage and standardized residual and thus demonstrating both outlying values in the predictors and outcome, did not result in any substantive effects in model performance. While the original model had an F-statistic of 31.72 and multiple <span class="math inline">\(R^2\)</span> of 0.1119, the modified regression has an F-statistic of 32.14 and multiple <span class="math inline">\(R^2\)</span> of 0.1132, a negligible increase. Furthermore, there were no consequential changes in the statistical significance of any predictors, as all remain worthy of inclusion in the model as determined by the P-values for each.</p>
+<p>Upon computing the variance inflation factor (VIF) for each predictor to assess multicollinearity among the selected variables, none of the chosen explanatory variables show a concerning linear dependence on any of the others as the VIF for each is less than 1.4. This indicates that the standard error for each regression coefficient is no more than 1.18 (<span class="math inline">\(\sqrt{1.4} = 1.18\)</span>) times larger than it would be were there no multicollinearity among them whatsoever.</p>
+<p>Conducting leave-one-out (LOO) cross-validation with the model yielded a predicted residual error sum of squares (PRESS) statistic of 1056.859 and LOO <span class="math inline">\(R^2\)</span> of 0.1033. The calculated LOO <span class="math inline">\(R^2\)</span> is marginally smaller than the unadjusted (multiple) <span class="math inline">\(R^2\)</span> of the fitted model (0.1119), indicating that the regression is neither over- or under-fitted, but well-fitted to the data.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># determine leverage cutoff</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="fu">nrow</span>(rbc_recur)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>P <span class="ot">&lt;-</span> <span class="dv">6</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>(<span class="dv">3</span> <span class="sc">*</span> P) <span class="sc">/</span> N</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.01185771</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generate diagnostic plots to determine which points have high leverage</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(rbc_log_lm, <span class="at">which =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="breast-cancer-relapse-regression-code_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># isolate observations to determine which variables have outlying values</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(rbc_recur, <span class="fu">rownames</span>(rbc_recur) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2674</span>, <span class="dv">2164</span>, <span class="dv">2141</span>), </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">select =</span> <span class="fu">c</span>(pid, nodes, pgr, er))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      pid nodes  pgr  er
+2164 1421     5 3000 135
+2141 2773     0  999 999
+2674 2802    30  109 301</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate numeric summaries for comparison</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rbc_recur<span class="sc">$</span>nodes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.000   0.000   2.000   3.964   6.000  34.000 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rbc_recur<span class="sc">$</span>pgr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    0.0     4.0    35.0   145.7   158.5  3000.0 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rbc_recur<span class="sc">$</span>er)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    0.0    11.0    58.0   161.8   196.0  3008.0 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># remove influential observation</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>rbc_modified <span class="ot">&lt;-</span> <span class="fu">subset</span>(rbc_recur, <span class="fu">rownames</span>(rbc_recur) <span class="sc">!=</span> <span class="dv">2164</span>)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co"># fit modified model excluding influential observation</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>rbc_modified_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(logrtime <span class="sc">~</span> nodes <span class="sc">+</span> pgr <span class="sc">+</span> er <span class="sc">+</span> size <span class="sc">+</span> meno, </span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> rbc_modified)</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="co"># print summary of modified model</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rbc_modified_lm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = logrtime ~ nodes + pgr + er + size + meno, data = rbc_modified)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.6171 -0.5461  0.0313  0.6042  2.3592 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  7.031e+00  4.391e-02 160.120  &lt; 2e-16 ***
+nodes       -3.088e-02  4.489e-03  -6.879 8.82e-12 ***
+pgr          3.061e-04  8.314e-05   3.682  0.00024 ***
+er           2.797e-04  8.920e-05   3.135  0.00175 ** 
+size20-50   -2.292e-01  4.762e-02  -4.813 1.64e-06 ***
+size&gt;50     -4.376e-01  7.223e-02  -6.058 1.74e-09 ***
+meno1       -1.076e-01  4.586e-02  -2.345  0.01914 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.8316 on 1510 degrees of freedom
+Multiple R-squared:  0.1132,    Adjusted R-squared:  0.1097 
+F-statistic: 32.14 on 6 and 1510 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load package for VIFs</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: carData</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate VIFs to assess multicollinearity</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">vif</span>(rbc_log_lm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          GVIF Df GVIF^(1/(2*Df))
+nodes 1.172080  1        1.082626
+pgr   1.097476  1        1.047605
+er    1.206022  1        1.098190
+size  1.154667  2        1.036607
+meno  1.138424  1        1.066970</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create function for LOO cross-validation</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>loo_predictions <span class="ot">&lt;-</span> <span class="cf">function</span>(fit) {</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  e <span class="ot">&lt;-</span> <span class="fu">residuals</span>(fit)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  h <span class="ot">&lt;-</span> <span class="fu">hatvalues</span>(fit)</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">fitted</span>(fit) <span class="sc">+</span> e</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(Y <span class="sc">-</span> e <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> h))</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="co"># find predictions using LOO cross-validation</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>loo_rbc <span class="ot">&lt;-</span> <span class="fu">loo_predictions</span>(rbc_log_lm)</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="co"># print PRESS</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>((rbc_recur<span class="sc">$</span>logrtime <span class="sc">-</span> loo_rbc)<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1056.859</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print LOO R^2</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(rbc_recur<span class="sc">$</span>logrtime, loo_rbc)<span class="sc">^</span><span class="dv">2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1033355</code></pre>
+</div>
+</div>
+</section>
+<section id="automatic-model-selection" class="level2">
+<h2 class="anchored" data-anchor-id="automatic-model-selection">Automatic Model Selection</h2>
+<p>In performing automatic model selection using the all subsets selection technique and the Akaike Information Criterion (AIC) penalty, the ideal model as determined by all subsets is that of size 10 which includes the numeric variables <strong>year</strong>, <strong>age</strong>, <strong>nodes</strong>, <strong>er</strong>, <strong>hormon</strong>, <strong>chemo</strong>, and <strong>dtime</strong> as well as the trilevel categorical variable <strong>size</strong>.</p>
+<p>However, this model is not suitable for statistical inference as automatic model selection intentionally fits all possible regressions, or <span class="math inline">\(2^{12} = 4096\)</span> models total in this case, for the best combination of explanatory variables that maximizes their ability to predict the outcome. Therefore, the attained P-values for these predictors are statistically significant precisely because that is why they were selected by the all subsets method. Similarly to the Analysis of Variance (ANOVA) test, repeated testing significantly inflates the likelihood of a Type-I error or erroneous rejection of the null. The P-values for hypothesis testing using the selected model do not account for either of these factors. Additionally, after fitting the model in accordance with the all subsets technique output, the <strong>er</strong> predictor is not significant at the 0.05 significance level and the moderate category of <strong>size</strong> is only significant at the 0.1 significance level, further reasoning to not consider this model for statistical inference.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load package necessary for automatic model selection</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmSubsets)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="co"># performs all subsets technique</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>rbc_all_subsets <span class="ot">&lt;-</span> <span class="fu">lmSubsets</span>(logrtime <span class="sc">~</span> year <span class="sc">+</span> age <span class="sc">+</span> meno <span class="sc">+</span> size <span class="sc">+</span> grade <span class="sc">+</span> nodes</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>                             <span class="sc">+</span> pgr <span class="sc">+</span> er <span class="sc">+</span> hormon <span class="sc">+</span> chemo <span class="sc">+</span> dtime <span class="sc">+</span> death, </span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>                             <span class="at">data =</span> rbc_recur)</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a><span class="co"># prints summary of all subsets method</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rbc_all_subsets)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+  lmSubsets(formula = logrtime ~ year + age + meno + size + grade + 
+    nodes + pgr + er + hormon + chemo + dtime + death, data = rbc_recur)
+
+Statistics:
+   SIZE BEST sigma     R2        R2adj     pval       Cp       AIC      BIC     
+    2   1    0.6223987 0.5016397 0.5013109 &lt; 2.22e-16 72.42220 2872.302 2888.278
+    3   1    0.6180662 0.5088778 0.5082294 &lt; 2.22e-16 51.38119 2852.093 2873.394
+    4   1    0.6152974 0.5135894 0.5126256 &lt; 2.22e-16 38.38268 2839.460 2866.086
+    5   1    0.6125342 0.5182668 0.5169932 &lt; 2.22e-16 25.49330 2826.792 2858.743
+    6   1    0.6110393 0.5209321 0.5193479 &lt; 2.22e-16 19.00897 2820.370 2857.646
+    7   1    0.6101459 0.5226479 0.5207524 &lt; 2.22e-16 15.54700 2816.924 2859.525
+    8   1    0.6091963 0.5244476 0.5222430 &lt; 2.22e-16 11.81815 2813.190 2861.116
+    9   1    0.6087373 0.5254784 0.5229627 &lt; 2.22e-16 10.53689 2811.896 2865.147
+   10   1    0.6084397 0.5262563 0.5234289 &lt; 2.22e-16 10.06052 2811.405 2869.982
+   11   1    0.6082945 0.5267965 0.5236564 &lt; 2.22e-16 10.34099 2811.673 2875.575
+   12   1    0.6081770 0.5272931 0.5238404 &lt; 2.22e-16 10.76002 2812.079 2881.306
+   13   1    0.6082438 0.5275032 0.5237358 &lt; 2.22e-16 12.09125 2813.405 2887.957
+   14   1    0.6084275 0.5275319 0.5234480 &lt; 2.22e-16 14.00000 2815.312 2895.190</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints model selected by all subsets</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lmSelect</span>(rbc_all_subsets, <span class="at">penalty =</span> <span class="st">"AIC"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+  lmSelect(formula = logrtime ~ year + age + meno + size + grade + 
+    nodes + pgr + er + hormon + chemo + dtime + death, data = rbc_recur, 
+    penalty = "AIC")
+
+Criterion:
+  [best] = AIC
+       1st 
+  2811.405 
+
+Subset:
+               best
+  +(Intercept) 1   
+  year         1   
+  age          1   
+  meno1            
+  size20-50    1   
+  size&gt;50      1   
+  grade            
+  nodes        1   
+  pgr              
+  er           1   
+  hormon       1   
+  chemo        1   
+  dtime        1   
+  death            </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generates selected model from all subsets</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>rbc_selected <span class="ot">&lt;-</span> <span class="fu">lm</span>(logrtime <span class="sc">~</span> year <span class="sc">+</span> age <span class="sc">+</span> size <span class="sc">+</span> nodes <span class="sc">+</span> er <span class="sc">+</span> hormon <span class="sc">+</span> chemo </span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>                   <span class="sc">+</span> dtime, <span class="at">data =</span> rbc_recur)</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="co"># prints summary of selected model</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rbc_selected)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = logrtime ~ year + age + size + nodes + er + hormon + 
+    chemo + dtime, data = rbc_recur)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.3117 -0.3041  0.0979  0.4218  1.2730 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -3.440e+01  1.099e+01  -3.129 0.001787 ** 
+year         2.012e-02  5.522e-03   3.644 0.000278 ***
+age          2.970e-03  1.429e-03   2.078 0.037886 *  
+size20-50   -6.422e-02  3.529e-02  -1.819 0.069039 .  
+size&gt;50     -1.595e-01  5.392e-02  -2.957 0.003153 ** 
+nodes       -1.388e-02  3.429e-03  -4.049 5.42e-05 ***
+er           9.890e-05  6.285e-05   1.574 0.115786    
+hormon       1.395e-01  5.269e-02   2.647 0.008206 ** 
+chemo        2.167e-01  4.240e-02   5.111 3.62e-07 ***
+dtime        4.701e-04  1.303e-05  36.069  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.6084 on 1508 degrees of freedom
+Multiple R-squared:  0.5263,    Adjusted R-squared:  0.5234 
+F-statistic: 186.1 on 9 and 1508 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
+<p>After performing the analysis whose findings and results are hitherto discussed, some concluding remarks can be offered. The most noteworthy inferences made using a subset of breast cancer data refer to biological or pathological characteristics in women which have a marked effect on the time course of tumor recurrence in women with primary breast cancer. Numerous diagnostic criteria are examined and recorded in the course of breast cancer staging and treatment, but constructing the most accurate Cox model for survival analysis and prediction entails deciphering differential covariate effects on the number of days to cancer recurrence. The findings of this analysis suggest that both <strong>tumor size</strong> and the <strong>number of lymph nodes</strong> impacted by the cancer are likely among the hypothetical pool of parameters that exert substantial effects on time to recurrence and should thus (perhaps) be retained in a predictive model. Considering human anatomy and physiology, the effect of lymph node involvement is not difficult to accept given that greater lymph node involvement directly translates to a more progressed cancer at the time of primary mass removal and would reasonably lead to earlier recurrence times. Additionally, tumor size reasonably carries greater effects because of their clinically observed correlation with relapse. Curiously, after exploring the hypothesis of whether ER+ (estrogen-receptor positive) status of the tumor has an effect on <strong>rtime</strong>, it was determined that although a statistically significant non-zero coefficient existed for the variable, the magnitude of the effect was quite small relative to other predictors. This also happened to be true for the findings pertaining to progesterone receptors. In future analyses, it would be worth determining why the effect of the expression of either hormone receptor is so small in this analysis, and whether this has to do with potential interactions with the use of hormone and or chemotherapeutic treatment. If the tumor has ER+ or PR+ status but the patient is receiving adjuvant hormonal treatment, the therapeutic effect may partially mar or counterbalance the natural influence of hormone receptor expression on recurrence time course, consequently attenuating the observed coefficient. In the findings corresponding to the original multiple linear model fitted, the <strong>rtime</strong> outcomes for postmenopausal status were deemed statistically indistinct from those of pre-menopausal women. The formal hypothesis test indicated a statistically significant non-zero effect that differed from pre-menopausal women, but the estimated coefficient was essentially zero. In future analyses, it may be valuable to examine whether the minimal observed effect of menopausal status reflects true biological similarity between groups or whether it arises from unaccounted for treatment disparities, comorbidities, or interactions with other covariates that were not captured in the present model.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

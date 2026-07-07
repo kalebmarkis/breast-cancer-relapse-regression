@@ -1,0 +1,366 @@
+---
+title: "Examining the Effects of Clinicopathologic Parameters on Time to Relapse in Primary Breast Cancer Patients: A Multiple Linear Regression Analysis"
+author: "Kaleb Chaney and Reece Champion"
+format: html
+---
+
+## Introduction
+
+The focus of this analysis is a breast cancer data set used in a survival analysis and prognostic model evaluation, namely the Cox prognostic model, by Roystan and Altman (2013). The data set being investigated is derived from a broader collection of data obtained via the Rotterdam tumor bank and includes a variety of clinicopathologic data of 2982 primary breast cancer patients, that is breast cancer patients in whom no spread to distant organs was reported and who underwent a primary tumor removal surgery. These data were acquired from the repository of built-in data sets in R provided in the course project instructions, and are included in the data frame 'RotterdamBreastCancer_df' in the OncoDatasets. The data was edited to exclude patients whose cancer never recurred, with 1518 patients with recurrent cancer retained in the data set used.
+
+The *outcome* variable of interest is **rtime**: a discrete numeric variable representing the number of days until the recurrence of cancer, or tumor relapse, for each patient. The *independent predictor* variables being explored for their putative effects on the time of relapse all refer to evaluative characteristics of the tumor removed or the patient. These include:
+
+**nodes**— a discrete numeric variable representing the number of lymph nodes involved, indicating the tumor's capacity for disseminating to and proliferating within the lymphatic system
+
+**pgr** and **er**— a discrete numeric variable quantifying the amount of progesterone receptor and estrogen receptor protein respectively in a sample of tumor cells recorded in (fmol/L), which is a proxy for determining the expression of each hormone's receptor in the cancerous cells
+
+**meno**— a binary categorical variable with two levels representing the patients' menopausal status, '0' for pre-menopausal and '1' for post-menopausal
+
+**size**— a tri-level categorical variable representing the size category corresponding to each tumor excised, determined through measuring the tumor's largest diameter, wherein 'small' reflects diameters less than or equal to 20 mm, 'moderate' reflects diameters ranging from 20 to 50 mm, and 'large' reflects diameters greater than 50 mm. 208 patients have 'large' tumor size, 745 have a 'moderate' tumor, and 565 patients have a 'small' tumor. 
+
+The significance of exploring this data set lies in improving the clinical understanding of how these independent variables bode for both the risk and time course of relapse in patients whose cancer returns after surgery. A clearer sense of the nature and prevalence of these associations can help refine the prognostic accuracy and applied utility of the Cox model, ultimately serving to the betterment of the quality and promptitude of clinical decision-making and treatment planning in modern breast cancer care. Whether or not cancer will recur and how long it takes to do so are data that would prove fundamentally significant regarding the anticipation of disease progression and the trajectory of patient care. An improved model with higher prognostic accuracy can result in the timely initiation of adjunct therapies and enhanced disease surveillance.
+
+```{r}
+# download OncoDataSets package if necessary
+# install.packages("OncoDataSets")
+
+# load library to access dataset
+library(OncoDataSets)
+
+# load dataset
+data("RotterdamBreastCancer_df")
+
+# filter out non-recurring patients
+rbc_recur <- RotterdamBreastCancer_df[RotterdamBreastCancer_df$recur != 0, ]
+```
+
+
+## Research Questions 
+
+After familiarizing ourselves with the data included in the data set, there are three questions of particular interest: 
+
+1. Does the **menopausal status of primary breast cancer patients**, specifically whether they are pre-menopausal or post-menopausal, have a measurable effect on the time of cancer recurrence following the first removal procedure in patients whose cancer did recur? 
+
+This question warrants investigation because of the physiological changes that characterize menopause and the implications these changes have on the theoretical response of the tumor to hormonal treatment specifically. When the cancerous mass is deemed positive for either estrogen or progesterone receptor expression, this indicates that the survival and spread of the tumor is at least in part sustained by circulating levels of endogenous estrogen and progesterone. In this event, hormonal treatment would be advisable since these receptors can be antagonized pharmacologically, therefore eliminating one of the life-sustaining pathways contributing to tumor proliferation. Phrased more simply, hormone-receptor–positive tumors depend on estrogen or progesterone to grow, so changes in these hormone levels can alter how the tumor responds to therapies that block these signals. Because circulating estrogen and progesterone levels substantially decline during menopause, it can be reasonably conjectured that post-menopausal status in patients whose cancer did recur may plausibly influence tumor behavior and pharmacological dynamics of hormonal treatment. In these patients, the amount of endogenous hormone that receptor antagonists must compete with for ligand binding-site occupation is reduced, potentially altering treatment efficacy. 
+
+2. Does the **quantity of estrogen receptor protein measured in the tumor cells** in primary breast cancer patients have a measurable effect on the time of cancer recurrence following the first removal procedure in patients whose cancer did recur?
+
+In accordance with the physiological rationale for hormonal treatment in PR+ or ER+ tumors— defined by surpassing established fmol/L thresholds— it is important to investigate how receptor expression influences time to relapse. In modern breast cancer treatment, determining whether cancer cells express estrogen or progesterone receptors is a crucial factor in assessing the viability of hormonal therapy. Hypothetically, the higher the level of receptor expression, the greater the cancerous cells’ dependency on hormone-receptor interactions for survival and spread, and therefore the greater the potential impact of hormonal treatment on patient outcomes. 
+
+3. Does the **size category of the tumor removed in primary breast cancer patients**, representing the broadest measurable diameter of the mass, have a measurable effect on the time of cancer recurrence following the first removal procedure?
+
+In the medical characterization of a tumor, one of the very first measurements obtained following surgical excision is its size. The standard means of declaring the size of an excised tumor or mass is to indicate its largest diameter in any dimension. In the Rotterdam data set, size encompasses three subcategories 'small', 'intermediate', and 'large' corresponding to diameters of <= 20 mm, 20-50 mm, and >= 50 mm respectively. The potential effect tumor size has on time until recurrence is worth investigating because tumor size can potentially carry substantial clinical relevance. For instance, a correlation between tumor size and metastasis, the systemic spreading of the cancer, recurrence, and even lymph node involvement has been observed and is more pronounced in certain cancers. Given how foundational tumor size is in clinical staging and risk assessment, scrutinizing its effect in post-operative breast cancer recurrence is arguably the most straightforward first step in the efforts of improving prognostic models of this sort.
+
+
+## Data Exploration
+
+The putative relationship or rough association between the predictor variables of interest, **nodes**, **pgr**, **er**, **size**, and **meno**, and the outcome variable **rtime** were visualized as a preliminary step, using scatter plots for the numeric predictors and box and multiple box plots for the categorical predictors. 
+
+The predictor variables that appear to have the most notable correlation with the outcome variable include **nodes** and **size**. In the plot visualizing number of days to cancer relapse against the **number of lymph nodes** involved, there is a conspicuous downward trend. In the multiple box plot visualizing the center and spread of each **size** category, the average number of days to relapse and the overall value ranges associated with each differ noticeably.
+
+As for the other predictors being explored in this analysis, their relationships with the outcome variable **rtime** appear to be weaker or less discernible from the simple visualizations alone. No noticeable differences in the center and spread of the **rtime** values observed for patients of each menopausal status are manifest. Additionally, the visualizations of **rtime** values plotted against the receptor protein quantities (estrogen or progesterone) for each patient indicate some association but one that appears minimal at best without further statistical exploration. 
+
+```{r}
+# load ggplot package
+library(ggplot2)
+
+# scatter plot of rtime against nodes
+ggplot(rbc_recur, aes( x = nodes, y = rtime)) +
+  
+  geom_point(alpha = 0.4, size = 2) + 
+  scale_y_continuous( name = "Days to Cancer Relapse") + 
+  scale_x_continuous( name = "# of Involved Lymph Nodes") + 
+  labs( title = "Time to Relapse and Number of Involved Lymph Nodes") + 
+  theme(
+    panel.background = element_rect(fill = "white", color = "black"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+# scatter plot of rtime against pgr
+ggplot(rbc_recur, aes( x = pgr, y = rtime)) +
+  
+  geom_point(alpha = 0.4, size = 2) + 
+  scale_y_continuous( name = "Days to Cancer Relapse") + 
+  scale_x_continuous( name = "Amount of PR Protein (fmol/L)") + 
+  labs( title = "Time to Relapse and Progesterone Receptor (PR) Quantity in Tumor Sample") + 
+  theme(
+    panel.background = element_rect(fill = "white", color = "black"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+# scatter plot of rtime against er
+ggplot(rbc_recur, aes( x = er, y = rtime)) +
+  
+  geom_point(alpha = 0.4, size = 2) + 
+  scale_y_continuous( name = "Days to Cancer Relapse") + 
+  scale_x_continuous( name = "Amount of ER Protein (fmol/L)") + 
+  labs( title = "Time to Relapse and Estrogen Receptor (ER) Quantity in Tumor Sample") + 
+  theme(
+    panel.background = element_rect(fill = "white", color = "black"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+# box plot of rtime by size
+ggplot(rbc_recur, aes(x = size, y = rtime, fill = size )) +
+  
+  geom_boxplot( show.legend = FALSE ) + 
+  geom_point(aes(fill = size),
+             alpha = 0,
+             show.legend = TRUE,
+             size = 4,
+             shape = 21) +
+  scale_y_continuous( name = "Days to Cancer Relapse" ) + 
+  scale_x_discrete( name = NULL,
+                    labels = c("Small", "Moderate", "Large")) +
+  scale_fill_manual( 
+    name = "Tumor Size (mm)",
+    values = c("<=20" = "white", "20-50" = "grey80", ">50" = "grey60"),
+    labels = c(
+      "small" = "small: ≤ 20 mm",
+      "moderate" = "moderate: 20–50 mm",
+      "large" = "large: ≥ 50 mm"),
+    guide = guide_legend(
+      override.aes = list(alpha = 1, shape = 21, size = 4, colour = "black")
+    )
+    )+
+  labs ( title = "Time to Relapse Summaries for Each Tumor Size Category") +
+  theme(
+    panel.background = element_rect(fill = "white", color = "black"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.key = element_blank()
+  )
+
+# box plot of rtime by meno
+rbc_recur$meno <- as.factor(rbc_recur$meno)
+
+ggplot(rbc_recur, aes(x = meno, y = rtime)) +
+  
+  geom_boxplot() + 
+  scale_y_continuous( name = "Days to Cancer Relapse" ) + 
+  scale_x_discrete( name = NULL,
+                    labels = c("Pre-menopausal", "Post-menopausal")) +
+  labs ( title = "Time to Relapse Summaries for Each Menopausal Status") +
+  theme(
+    panel.background = element_rect(fill = "white", color = "black"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+```
+
+## Multiple Linear Regression Model
+
+The results of the multiple linear model provided below are interesting. In terms of the overall model test, the null and alternative hypotheses are written as follows:
+
+$$
+H_0: \beta_{nodes} =\beta_{pgr}=\beta_{er}=\beta_{size-small}=\beta_{size-moderate}=\beta_{size-large}=\beta_{meno-pre}=\beta_{meno-post} = 0
+$$
+$$
+H_A: >1 \beta_j \neq 0 for j=nodes,...,meno
+$$
+
+The null hypothesis declares that none of the independent predictor variables explored contribute a significant effect to the variability observed in the outcome **rtime**. The alternative hypothesis states that there exists a non-zero effect on the outcome for at least one predictor variable. 
+
+When looking at the overall F-test results which evaluated the above hypotheses, there is an F-statistic of 23.49 on 6 and 1511 degrees of freedom with a p-value less than 2.16 e^-16. Therefore, based on the overall F-test (F=23.49, p=<2.16e-16) the null hypothesis can be rejected, lending to the conclusion that at least one of the independent variables included in the model has a statistically significant effect on the variability observed in the outcome. Despite these results, the multiple R^2 value is a meager 0.08533, meaning that only 8.533% of the variability observed in the outcome **rtime** is actually explained by the fitted model. So even though the model test indicates that at least one variable contributes a significant effect, this effect is ultimately small in a practical sense.
+
+Regarding the effect of lymph node involvement, there appears a negative association between days until relapse and the number of lymph nodes involved in the breast cancer. The slope estimated for number of lymph nodes is -29.71 with a p-value of 7.55e-09, meaning that per additional involved lymph node present, the number of days until cancer relapse decreases by 29.71 holding all other independent variables constant. Because this result is statistically significant (p < α = 0.05), it can be inferred that the more lymph nodes involved in the primary breast cancer case, the sooner recurrence will likely occur in patients whose cancer does return after removal of the primary tumor. This is in line with our hypothesis because lymphatic involvement is an immediate and necessary precursor for the manifestation of secondary cancers elsewhere in the body, so it's sensible that the **greater** the lympatic involvement, the more mobility the cancer has in the body, which may accelerate recurrence and lead to reduced **rtime** values. 
+
+Regarding the effects of both **pgr** and **er** independent variables, the quantity of progesterone and estrogen receptor protein present in the extracted tumor have a relatively smaller effect compared to the other predictors. Each additional fmol/L of progesterone receptor is associated with a 0.27-day increase in the total duration until cancer relapse (slope = 0.266, p = 0.0036), and each additional fmol/L of estrogen receptor is associated with a 0.26-day increase (slope = 0.255, p = 0.0117), holding all other variables constant. The results for both receptors are consistent with expectations, as higher expression of either hormone receptor in the primary tumor mass tends to result in improved response to hormonal treatment clinically which translates to a delay in tumor recurrence for patients who did experienced cancer relapse.
+
+Regarding results generated for the categorical predictor size, coefficients were obtained for "moderate" and "large" size categories with "small" being the point of reference for interpretation. Relative to patients with a small tumor (>= 20 mm), patients with a moderate tumor (20-50 mm) have a smaller relapse time course that is reduced by approximately 270.83 days (p = 6.58e-07), whereas patients with a large tumor (>50 mm) have a relapse time course reduced by a staggering 443.27 days (p = 8.25e-08). These results align with what was expected initially because its more probable that larger tumors, by virtue of their greater volume and increased cellular impact, have already engendered metastatic cells or spread to regional lymph nodes which can be further conveyed via systemic lymphatic drainage. Consequently, patients with moderate or large tumors tend to experience recurrence sooner than those with small tumors.
+
+The last variable to interpret is the binary categorical variable **meno**. A coefficient was generated for the "post-menopausal" level of the variable, with "pre-menopausal" standing in as the point of reference for interpretation. According to the results, post-menopausal women have an estimated 64.94-day reduction in their relapse time course as compared to women who haven't (pre-menopausal) (p = 0.21318). This coefficient is not statistically significant however, as the p-value exceeds the significance value established at α = 0.05. This indicates that no difference in **rtime** between pre- and post-menopausal breast cancer patients can be concluded.
+
+In reflecting on the overall predictive accuracy of the model, it is essential to interpret the residual standard error (RSE). The model has an RSE of 947.2, meaning that predictions for new patients could deviate on average by approximately 947 days from the true **rtime** values observed. The observed range of **rtime** in the data set used in this analysis, including only patients whose cancer did relapse, spans 38 to 5,473 days, and the RSE alone represents ~17% of this range. This indicates that predictions may be highly imprecise, highlighting the need for model improvement or the inclusion of additional relevant predictors.
+
+```{r}
+# fitting a linear model predicting rtime
+rbc_lm <- lm(rtime ~ nodes + pgr + er + size + meno, data = rbc_recur)
+
+# print summary of model
+summary(rbc_lm)
+```
+
+## Improving the Model
+
+The generated diagnostic plots for the model do raise concerns for each regression assumption. Beginning with the residuals vs. fitted plot, there is a glaring issue with linearity as the plot demonstrates a systematic deviation from the horizontal line at 0. Additionally, homoscedasticity appears to be violated due to the a general funnel shape where the residuals are quite clustered around the fitted value of 500 with a widening spread as the fitted values increase towards 2000. The Normal Q-Q plot brings attention to a violation of the normality assumption owing to the systematic deviation in both tails, but specifically the right tail, indicating a large right skew in the outcome variable, corroborated by the histogram of time to recurrence.
+
+To correct these violations through transforming the outcome variable, a log transformation would be appropriate as delineated by the Box-Cox Transform since the lambda value is near 0. This eliminated the right skew, and although not perfect, the distribution of the log of the time to recurrence approaches normal. Notably, this transformation improved the F-statistic and multiple $R^2$ of the model, up from 23.49 to 31.72 and 0.0853 to 0.1119, respectively. The same positive effect can be observed in the diagnostic plots using the log-transformed outcome, which now show no major violations of the assumptions. The errors are now more closely centered around 0 in the residuals vs. fitted plot, with only minor deviations, satisfying the linearity assumption. The previously observed funnel shape is now also absent in addition to there being no systematic deviations away from the flat line in the scale-location plot, demonstrating homoscedasticity. Finally, both of the tails in the Normal Q-Q plot still deviate from the $y = x$ line, but due to their symmetric shape, this indicates heavy tails which is common in large datasets. Therefore, we can proceed with statistical inference in the absence of any analysis-shattering violations of the regression assumptions.
+
+For the **er** variable, a spline was considered due to the predictor's low linear correlation with the outcome. In doing so, the model inclusive of the spline for estrogen receptor status accounted for more variability in the time to recurrence in days, but showed varying levels of statistical significance by division in the spline. Moreover, the presence of the spline resulted in a complication with the linearity assumption, and thus was discarded.
+
+Due to the dramatic reduction in circulating estrogen levels following menopause in women, an interaction term between **meno** and **er** warrants investigating Fitting a model with that interaction results in the **er** variable no longer being statistically significant while making the **meno1** dummy variable statistically significant at a lower significance level (0.01), but the interaction term itself is not significant with a P-value of 0.18. Nevertheless, in this model, for a woman who has undergone menopause, the slope on **er** is 0.0003 units more positive than for a woman who has not undergone menopause.
+
+```{r}
+# load package for autoplot
+library(ggfortify)
+
+# create diagnostic plots for model
+autoplot(rbc_lm)
+
+# visualize distribution of outcome variable
+hist(rbc_recur$rtime, main = "Distribution of Time to Recurrence",
+     xlab = "Time to Recurrence (Days)")
+
+# determine best tranformation for outcome variable
+bc <- MASS::boxcox(rbc_lm)
+
+# use log transformation and revisualize distribution of outcome
+rbc_recur$logrtime <- log(rbc_recur$rtime)
+hist(rbc_recur$logrtime, main = "Distribution of Log of Time to Recurrence",
+     xlab = "Log of Time to Recurrence (Days)")
+
+# fit linear model predicting rtime using log transformation
+rbc_log_lm <- lm(logrtime ~ nodes + pgr + er + size + meno, data = rbc_recur)
+
+# print summary of log model
+summary(rbc_log_lm)
+
+# create diagnostic plots for log model
+autoplot(rbc_log_lm)
+
+# load package for spline
+library(splines)
+
+# create model with spline
+rbc_spline <- lm(logrtime ~ bs(er, 3) + pgr + meno + nodes + size, data = rbc_recur)
+
+# print summary of spline model
+summary(rbc_spline)
+
+# assess assumptions with spline model
+autoplot(rbc_spline)
+
+# fit a linear model to predict rtime with meno/er interaction
+rbc_menoer_lm <- lm(logrtime ~ nodes + pgr + er + size + meno + meno * er, data = rbc_recur)
+
+# print summary of interaction model
+summary(rbc_menoer_lm)
+```
+
+## Formal Hypothesis Tests
+
+The following hypotheses, formulated from the overarching research questions posed above, will be formally investigated:
+
+1) $H_0: \beta_{meno-post} = 0$
+   $H_A: \beta_{meno-post} ≠ 0$
+
+2) $H_0: \beta_{er} = 0$
+   $H_A: \beta_{er} ≠ 0$
+
+3) $H_0: \beta_{size-moderate} = \beta_{size-large} = 0$
+   $H_A$: At least one of the size group coefficients is not equal to 0.
+   
+After conducting t-tests for hypotheses 1 and 2 as well as a single-term deletion test for hypothesis 3 with a significance level of 0.05, the null hypothesis can be rejected for each research question, indicating that the slope coefficients for the post-menopausal group for the **meno** variable is significantly different from 0 (t(1511) = -2.45, p = 0.01), the slope coefficient for the **er** variable is significantly different from 0 (t(1511) = 3.31, p = 0.0009), and the model including the **size** variable is preferred to the reduced model excluding it (F = 21.27, p < 0.001). 
+
+Referring back to the original research questions, the conclusions reached by the tests indicate that there does exist an effect of menopausal status, estrogen receptor status, and tumor size on the time in days to recurrence although the estimated slopes rendered are incredibly small. These conclusions are based on the log-transformed outcome model (using **logrtime**), which stabilizes variance and reduces skew in the residuals. Because the outcome is now on a log scale, slope magnitudes appear small, but they still reflect the relative proportional effect of each predictor on time to tumor recurrence. These results do support the research questions and hypotheses raised as only a general effect was hypothesized to exist for each of these predictors on the outcome. However, the nature and magnitude of the real effects of the variables examined are likely questionable. A limitation of these conclusions is that since this is an observational study, causality of these features on time to recurrence cannot be determined.  
+
+```{r}
+# perform t-tests
+summary(rbc_log_lm)
+
+# perform single-term deletion tests
+drop1(rbc_log_lm, test = "F")
+```
+
+## Robustness of Results
+
+Diagnostic plots revealed three potentially influential observations (2141, 2164, and 2674) that surpass the calculated leverage cutoff of 0.0119. By isolating these three observations (patients 2773, 1421, and 2802) and comparing their values for the numeric predictors **nodes**, **pgr**, and **er**, it became evident that the tumor excised from patient 2141 had a high progesterone and estrogen receptor status of 999 fmol/L for both in comparison to the mean of 145.7 fmolL and 161.8 fmol/L respectively. Patient 2164's tumor had a high progesterone receptor status of 3000 fmol/L as well, notably the largest in the dataset. Lastly, patient 2674's sample showed a high estrogen receptor status of 301 fmol/L in addition to the patient possessing a large number of lymph nodes involved at 30, well above the average of 3.96 and falling above the third quartile of 6. These features are undoubtedly responsible for the high leverages observed (approximately 0.12, 0.2, and 0.8) for the aforementioned patients.
+
+Despite the presence of an influential observation, removing patient 2164 from consideration in the model, due to both the high leverage and standardized residual and thus demonstrating both outlying values in the predictors and outcome, did not result in any substantive effects in model performance. While the original model had an F-statistic of 31.72 and multiple $R^2$ of 0.1119, the modified regression has an F-statistic of 32.14 and multiple $R^2$ of 0.1132, a negligible increase. Furthermore, there were no consequential changes in the statistical significance of any predictors, as all remain worthy of inclusion in the model as determined by the P-values for each.
+
+Upon computing the variance inflation factor (VIF) for each predictor to assess multicollinearity among the selected variables, none of the chosen explanatory variables show a concerning linear dependence on any of the others as the VIF for each is less than 1.4. This indicates that the standard error for each regression coefficient is no more than 1.18 ($\sqrt{1.4} = 1.18$) times larger than it would be were there no multicollinearity among them whatsoever.
+
+Conducting leave-one-out (LOO) cross-validation with the model yielded a predicted residual error sum of squares (PRESS) statistic of 1056.859 and LOO $R^2$ of 0.1033. The calculated LOO $R^2$ is marginally smaller than the unadjusted (multiple) $R^2$ of the fitted model (0.1119), indicating that the regression is neither over- or under-fitted, but well-fitted to the data.
+
+```{r}
+# determine leverage cutoff
+N <- nrow(rbc_recur)
+P <- 6
+(3 * P) / N
+
+# generate diagnostic plots to determine which points have high leverage
+autoplot(rbc_log_lm, which = 5)
+
+# isolate observations to determine which variables have outlying values
+subset(rbc_recur, rownames(rbc_recur) %in% c(2674, 2164, 2141), 
+       select = c(pid, nodes, pgr, er))
+
+# calculate numeric summaries for comparison
+summary(rbc_recur$nodes)
+summary(rbc_recur$pgr)
+summary(rbc_recur$er)
+
+# remove influential observation
+rbc_modified <- subset(rbc_recur, rownames(rbc_recur) != 2164)
+
+# fit modified model excluding influential observation
+rbc_modified_lm <- lm(logrtime ~ nodes + pgr + er + size + meno, 
+                      data = rbc_modified)
+
+# print summary of modified model
+summary(rbc_modified_lm)
+
+# load package for VIFs
+library(car)
+
+# calculate VIFs to assess multicollinearity
+vif(rbc_log_lm)
+
+# create function for LOO cross-validation
+loo_predictions <- function(fit) {
+  e <- residuals(fit)
+  h <- hatvalues(fit)
+  Y <- fitted(fit) + e
+  return(Y - e / (1 - h))
+}
+
+# find predictions using LOO cross-validation
+loo_rbc <- loo_predictions(rbc_log_lm)
+
+# print PRESS
+sum((rbc_recur$logrtime - loo_rbc)^2)
+
+# print LOO R^2
+cor(rbc_recur$logrtime, loo_rbc)^2
+```
+
+
+## Automatic Model Selection
+
+In performing automatic model selection using the all subsets selection technique and the Akaike Information Criterion (AIC) penalty, the ideal model as determined by all subsets is that of size 10 which includes the numeric variables **year**, **age**, **nodes**, **er**, **hormon**, **chemo**, and **dtime** as well as the trilevel categorical variable **size**.
+
+However, this model is not suitable for statistical inference as automatic model selection intentionally fits all possible regressions, or $2^{12} = 4096$ models total in this case, for the best combination of explanatory variables that maximizes their ability to predict the outcome. Therefore, the attained P-values for these predictors are statistically significant precisely because that is why they were selected by the all subsets method. Similarly to the Analysis of Variance (ANOVA) test, repeated testing significantly inflates the likelihood of a Type-I error or erroneous rejection of the null. The P-values for hypothesis testing using the selected model do not account for either of these factors. Additionally, after fitting the model in accordance with the all subsets technique output, the **er** predictor is not significant at the 0.05 significance level and the moderate category of **size** is only significant at the 0.1 significance level, further reasoning to not consider this model for statistical inference.
+
+```{r}
+# load package necessary for automatic model selection
+library(lmSubsets)
+
+# performs all subsets technique
+rbc_all_subsets <- lmSubsets(logrtime ~ year + age + meno + size + grade + nodes
+                             + pgr + er + hormon + chemo + dtime + death, 
+                             data = rbc_recur)
+
+# prints summary of all subsets method
+summary(rbc_all_subsets)
+
+# prints model selected by all subsets
+lmSelect(rbc_all_subsets, penalty = "AIC")
+
+# generates selected model from all subsets
+rbc_selected <- lm(logrtime ~ year + age + size + nodes + er + hormon + chemo 
+                   + dtime, data = rbc_recur)
+
+# prints summary of selected model
+summary(rbc_selected)
+```
+
+
+## Conclusions
+
+After performing the analysis whose findings and results are hitherto discussed, some concluding remarks can be offered. The most noteworthy inferences made using a subset of breast cancer data refer to biological or pathological characteristics in women which have a marked effect on the time course of tumor recurrence in women with primary breast cancer. Numerous diagnostic criteria are examined and recorded in the course of breast cancer staging and treatment, but constructing the most accurate Cox model for survival analysis and prediction entails deciphering differential covariate effects on the number of days to cancer recurrence. The findings of this analysis suggest that both **tumor size** and the **number of lymph nodes** impacted by the cancer are likely among the hypothetical pool of parameters that exert substantial effects on time to recurrence and should thus (perhaps) be retained in a predictive model. Considering human anatomy and physiology, the effect of lymph node involvement is not difficult to accept given that greater lymph node involvement directly translates to a more progressed cancer at the time of primary mass removal and would reasonably lead to earlier recurrence times. Additionally, tumor size reasonably carries greater effects because of their clinically observed correlation with relapse. Curiously, after exploring the hypothesis of whether ER+ (estrogen-receptor positive) status of the tumor has an effect on **rtime**, it was determined that although a statistically significant non-zero coefficient existed for the variable, the magnitude of the effect was quite small relative to other predictors. This also happened to be true for the findings pertaining to progesterone receptors. In future analyses, it would be worth determining why the effect of the expression of either hormone receptor is so small in this analysis, and whether this has to do with potential interactions with the use of hormone and or chemotherapeutic treatment. If the tumor has ER+ or PR+ status but the patient is receiving adjuvant hormonal treatment, the therapeutic effect may partially mar or counterbalance the natural influence of hormone receptor expression on recurrence time course, consequently attenuating the observed coefficient. In the findings corresponding to the original multiple linear model fitted, the **rtime** outcomes for postmenopausal status were deemed statistically indistinct from those of pre-menopausal women. The formal hypothesis test indicated a statistically significant non-zero effect that differed from pre-menopausal women, but the estimated coefficient was essentially zero. In future analyses, it may be valuable to examine whether the minimal observed effect of menopausal status reflects true biological similarity between groups or whether it arises from unaccounted for treatment disparities, comorbidities, or interactions with other covariates that were not captured in the present model.
+
